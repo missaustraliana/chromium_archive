@@ -76,7 +76,7 @@ function checkURL() {
 
                 if (previousContent !== contentValue) {
                     console.log(`fresh off the google pot!🍝 last update was ${getTimeAgo(previousLastModified)}`);
-                    console.log(`${previousContentValue} -> ${contentValue}`);
+                    console.log(`${previousContent} -> ${contentValue}`);
 
                     // URL of the file to download
                     const fileUrl = 'https://commondatastorage.googleapis.com/chromium-browser-snapshots/Mac_Arm/' + contentValue + '/chrome-mac.zip';
