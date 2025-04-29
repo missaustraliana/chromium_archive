@@ -41,7 +41,12 @@ const dataFilePath = path.join(__dirname, 'last_content.txt');
 const checkInterval = 5000;
 function checkURL() {
 
-    https.get(url, {  headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36' }  }, (res) => {
+    https.get(url, {
+        family: 4,
+        headers: {
+            'User-Agent': 'chromium-archive'
+        }
+    }, (res) => {
 
         let data = '';
 
