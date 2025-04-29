@@ -1,3 +1,4 @@
 node_modules/
 .env
 *.zip
+last_content.txt
