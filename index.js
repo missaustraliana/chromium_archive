@@ -63,10 +63,12 @@ function checkURL() {
 
                 // Check if we have a previous value stored
                 let previousContent = null;
+                let previousLastModified = null;
                 try {
                     if (fs.existsSync(dataFilePath)) {
                         const previousData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
                         previousContent = previousData.content;
+                        previousLastModified = previousData["last-modified"];
                     }
                 } catch (err) {
                     console.log('No previous content found, this is the first run.');
@@ -74,6 +76,7 @@ function checkURL() {
 
                 if (previousContent !== contentValue) {
                     console.log('CHANGE DETECTED!');
+                    console.log(`Previous: ${getTimeAgo(previousLastModified)}`);
 
                     // URL of the file to download
                     const fileUrl = 'https://commondatastorage.googleapis.com/chromium-browser-snapshots/Mac_Arm/' + contentValue + '/chrome-mac.zip';
@@ -98,8 +101,6 @@ function checkURL() {
                     fs.writeFileSync(dataFilePath, JSON.stringify(jsonData, null, 2));
 
                     // You could add additional actions here like sending notifications
-                } else {
-                    console.log(getTimeAgo(lastModified))
                 }
             } catch (error) {
                 console.error('Error processing response:', error.message);
