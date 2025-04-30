@@ -6,6 +6,8 @@ const path = require('path');
 const { get } = require('http');
 const crypto = require('crypto');
 const { db } = require('./db.js');
+const plist = require('plist');
+const { TextWriter, Uint8ArrayReader, ZipReader } = require('@zip.js/zip.js');
 
 function getTimeAgo(timestamp) {
     const now = new Date();
@@ -40,13 +42,14 @@ const url = 'https://download-chromium.appspot.com/rev/Mac_Arm?type=snapshots';
 const dataFilePath = path.join(__dirname, 'last_content.txt');
 const checkInterval = 5000;
 function checkURL() {
-
-    https.get(url, {
+    const options = {
         family: 4,
         headers: {
             'User-Agent': 'chromium-archive'
         }
-    }, (res) => {
+    };
+
+    https.get(url, options, (res) => {
 
         let data = '';
 
@@ -87,7 +90,7 @@ function checkURL() {
                     const fileStream = fs.createWriteStream(filename);
 
                     // Download the file
-                    https.get(fileUrl, (response) => {
+                    https.get(fileUrl, options, (response) => {
                         response.pipe(fileStream);
 
                         fileStream.on('finish', () => {
@@ -132,17 +135,47 @@ async function upload(commit, lastModified) {
     shasum.update(file);
     const sha1 = shasum.digest('hex');
 
-    db.prepare(`insert into chromium (build, build_date, chromium_version, filename, filesize, sha1) values (?, ?, ?, ?, ?)`)
+    // get version from within the zip
+    let chromiumVersion = '?';
+    try {
+        // Create a BlobReader for the zip file
+        const zipData = await fsp.readFile(zip);
+        const reader = new Uint8ArrayReader(new Uint8Array(zipData));
+        const zipReader = new ZipReader(reader);
+
+        // Get the entries in the zip file
+        const entries = await zipReader.getEntries();
+
+        // Find the Info.plist file
+        const infoEntry = entries.find(entry => entry.filename == 'chrome-mac/Chromium.app/Contents/Info.plist');
+
+        if (infoEntry) {
+            // Extract just the Info.plist file
+            const content = await infoEntry.getData(new TextWriter());
+
+            // Parse the plist file
+            const plistData = plist.parse(content);
+            chromiumVersion = plistData['CFBundleShortVersionString'];
+            console.log(`Chromium version: ${chromiumVersion}`);
+        } else {
+            console.log('Info.plist not found in the zip file');
+        }
+
+        // Close the zip reader
+        await zipReader.close();
+    } catch (error) {
+        console.error('Error extracting Info.plist:', error);
+    }
+
+    db.prepare(`insert into chromium (build, build_date, chromium_version, filename, filesize, sha1) values (?, ?, ?, ?, ?, ?)`)
         .run([
             commit,
-            new Date(lastModified),
-            '?',
+            new Date(lastModified).toISOString(),
+            chromiumVersion,
             `${commit}.zip`,
             fileSize,
             sha1
-        ]); 
-
-    return;
+        ]);
 
     // Initialize multipart upload
     const initResult = await fetch(`https://${process.env.ARCHIVE_S3_HOST}/${process.env.ARCHIVE_S3_BUCKET}/${commit}.zip?uploads`, {
@@ -246,6 +279,9 @@ async function upload(commit, lastModified) {
     }
 
     await fsp.rm(zip);
+
+    db.prepare(`update chromium set is_uploaded = 1 where build = ?`)
+        .run(commit);
 }
 
 console.log(`Monitoring started. Checking every ${checkInterval / 1000} seconds.`);
