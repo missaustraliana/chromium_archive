@@ -168,6 +168,9 @@ async function doUpload(commit, lastModified) {
     // @ts-ignore
     file = null;
 
+    // Force garbage collection
+    global.gc?.();
+
     db.prepare(`insert into chromium (build, build_date, chromium_version, filename, filesize, sha1) values (?, ?, ?, ?, ?, ?)`)
         .run([
             commit,
@@ -183,6 +186,9 @@ async function doUpload(commit, lastModified) {
         filename: zip,
         deleteAfterUpload: true
     });
+
+    // Force garbage collection
+    global.gc?.();
 
     db.prepare(`update chromium set is_uploaded = 1 where build = ?`)
         .run(commit);
