@@ -5,7 +5,7 @@ const bucket = process.env.ARCHIVE_S3_BUCKET;
 const accessKey = process.env.ARCHIVE_S3_ACCESS_KEY;
 const secretKey = process.env.ARCHIVE_S3_SECRET_KEY;
 
-export async function upload({ filePath, filename, chunkSize = 10, concurrency = 5, deleteAfterUpload = false }) {
+export async function upload({ filePath, filename, chunkSize = 5, concurrency = 10, deleteAfterUpload = false }) {
   console.log(`Uploading: ${filePath} as ${filename}`);
 
   try {
