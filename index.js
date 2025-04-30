@@ -127,7 +127,7 @@ async function doUpload(commit, lastModified) {
     const fileSize = (await fsp.stat(zip)).size;
 
     // get the sha1 of the zip
-    const file = await fsp.readFile(zip);
+    let file = await fsp.readFile(zip);
     const shasum = crypto.createHash('sha1');
     shasum.update(file);
     const sha1 = shasum.digest('hex');
@@ -136,8 +136,7 @@ async function doUpload(commit, lastModified) {
     let chromiumVersion = '?';
     try {
         // Create a BlobReader for the zip file
-        const zipData = await fsp.readFile(zip);
-        const reader = new Uint8ArrayReader(new Uint8Array(zipData));
+        const reader = new Uint8ArrayReader(new Uint8Array(file));
         const zipReader = new ZipReader(reader);
 
         // Get the entries in the zip file
@@ -164,6 +163,10 @@ async function doUpload(commit, lastModified) {
     } catch (error) {
         console.error('Error extracting Info.plist:', error);
     }
+
+    // Free up memory
+    // @ts-ignore
+    file = null;
 
     db.prepare(`insert into chromium (build, build_date, chromium_version, filename, filesize, sha1) values (?, ?, ?, ?, ?, ?)`)
         .run([

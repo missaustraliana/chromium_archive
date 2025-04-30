@@ -65,6 +65,7 @@ export async function upload({ filePath, filename, chunkSize = 5, concurrency = 
           active.add(partNumber);
 
           // Calculate chunk boundaries
+          // @ts-ignore
           const start = (partNumber - 1) * chunkSizeBytes;
           const chunkEnd = Math.min(fileSize, start + chunkSizeBytes);
 
@@ -77,6 +78,7 @@ export async function upload({ filePath, filename, chunkSize = 5, concurrency = 
           // Start the upload and continue processing when it completes
           uploadPart(partNumber, buffer).then(result => {
             // Store the result
+            // @ts-ignore
             parts[partNumber - 1] = result;
 
             // Remove from active set
