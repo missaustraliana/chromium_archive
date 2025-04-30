@@ -4,8 +4,8 @@ const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 const { get } = require('http');
-
-
+const crypto = require('crypto');
+const { db } = require('./db.js');
 
 function getTimeAgo(timestamp) {
     const now = new Date();
@@ -93,7 +93,7 @@ function checkURL() {
                         fileStream.on('finish', () => {
                             fileStream.close();
                             console.log(`Downloaded: ${filename}`);
-                            upload(contentValue);
+                            upload(contentValue, lastModified);
                         });
                     });
 
@@ -116,7 +116,7 @@ checkURL();
 
 // Set up recurring checks
 setInterval(checkURL, checkInterval);
-async function upload(commit) {
+async function upload(commit, lastModified) {
     const zip = `${commit}.zip`;
     console.log(`Uploading: ${commit}.zip`);
 
@@ -125,6 +125,24 @@ async function upload(commit) {
     const numberOfChunks = Math.ceil(fileSize / chunkSize);
 
     console.log(`File size: ${fileSize} bytes, chunking into ${numberOfChunks} parts`);
+
+    // get the sha1 of the zip
+    const file = await fsp.readFile(zip);
+    const shasum = crypto.createHash('sha1');
+    shasum.update(file);
+    const sha1 = shasum.digest('hex');
+
+    db.prepare(`insert into chromium (build, build_date, chromium_version, filename, filesize, sha1) values (?, ?, ?, ?, ?)`)
+        .run([
+            commit,
+            new Date(lastModified),
+            '?',
+            `${commit}.zip`,
+            fileSize,
+            sha1
+        ]); 
+
+    return;
 
     // Initialize multipart upload
     const initResult = await fetch(`https://${process.env.ARCHIVE_S3_HOST}/${process.env.ARCHIVE_S3_BUCKET}/${commit}.zip?uploads`, {
