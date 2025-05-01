@@ -139,10 +139,10 @@ function checkURL() {
 }
 
 // Initial check
-//checkURL();
+checkURL();
 
 // Set up recurring checks
-//setInterval(checkURL, checkInterval);
+setInterval(checkURL, checkInterval);
 async function doUpload(commit, lastModified) {
     const zip = `${commit}.zip`;
     console.log(`Uploading: ${commit}.zip`);
