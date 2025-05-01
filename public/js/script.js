@@ -62,12 +62,51 @@ function getVersionListing(version) {
                 var chromiumversion = document.createElement('a');
                 var br = document.createElement('br');
                 chromiumversion.innerHTML = data.buildIndex[i].build
-
+                chromiumversion.href = "#";
+                chromiumversion.setAttribute("onClick", "getBuildDetails(\"" + version + "\", \"" + data.buildIndex[i].build + "\")")
                 container.appendChild(chromiumversion);
                 container.appendChild(br);
             }
             document.body.appendChild(container);
             document.getElementById("name").innerHTML = "Build Listing"
+            document.getElementById("progress").hidden = true
+
+        }
+        ).catch((error) => {
+            console.error(error)
+            document.getElementById("progress").hidden = true
+            document.getElementById("name").innerHTML = "Something went wrong."
+        }
+        )
+    }
+    )
+}
+function getBuildDetails(version, build) {
+    document.getElementById("container").remove();
+    document.getElementById("name").innerHTML = "Downloading index."
+    document.getElementById("progress").hidden = false
+    fetch("api/index/" + version + "/" + build, {
+
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        method: "GET"
+    }).then(response => {
+        response.json().then(data => {
+            var container = document.createElement('div');
+            container.id = "container";
+            /*
+                var chromiumversion = document.createElement('a');
+                var br = document.createElement('br');
+                chromiumversion.innerHTML = data.buildIndex[i].build
+                chromiumversion.href = "#";
+                chromiumversion.setAttribute("onClick", "getBuildDetails(\"" + version + "\", \"" + data.buildIndex[i].build + "\")")
+                container.appendChild(chromiumversion);
+                container.appendChild(br);
+            */
+           console.log(data)
+            document.body.appendChild(container);
+            document.getElementById("name").innerHTML = "Build " + build
             document.getElementById("progress").hidden = true
 
         }
