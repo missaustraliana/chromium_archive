@@ -42,7 +42,12 @@
                     document.body.appendChild(br);
                 }
                 
-                
+                var chromiumversion = document.createElement('a');
+                    var br = document.createElement('br');
+                    chromiumversion.innerHTML = "<span class=\"thin\">Showing " + data.availableBuilds + " builds</span>"
+                    
+                    document.body.appendChild(chromiumversion);
+                document.body.appendChild(br);
                console.log(data.availableBuildIndex[1].chromium_version)
                 document.getElementById("name").innerHTML = "Version Listing"
                 document.getElementById("progress").hidden = true
