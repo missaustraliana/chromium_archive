@@ -24,26 +24,33 @@
         function bytesToMB(bytes) {
             return (bytes / (1024 * 1024)).toFixed(2);
         }
-            fetch("index", {
+        fetch("index", {
 
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                method: "GET"
-            }).then(response => {
-                response.json().then(data => {
-                    document.getElementById("name").innerHTML = "Viewing " + data.availableBuilds + " builds"
-                    document.getElementById("progress").hidden = true
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            method: "GET"
+        }).then(response => {
+            response.json().then(data => {
+                for (let i = 0; i < data.availableBuildIndex.length; i++) {
+                    var chromiumversion = document.createElement('a');
+                    chromiumversion.innerHTML = data.availableBuildIndex[i].chromium_version
+                    
+                }
+                document.body.appendChild(chromiumversion);
+               console.log(data.availableBuildIndex[1].chromium_version)
+                document.getElementById("name").innerHTML = "Viewing " + data.availableBuilds + " builds"
+                document.getElementById("progress").hidden = true
 
-                }
-                ).catch((error) => {
-                    console.log("Could not reach archive.org or item does not exist. Failing")
-                    document.getElementById("progress").hidden = true
-                    document.getElementById("name").innerHTML = "Something went wrong."
-                }
-                )
+            }
+            ).catch((error) => {
+                console.error(error)
+                document.getElementById("progress").hidden = true
+                document.getElementById("name").innerHTML = "Something went wrong."
             }
             )
+        }
+        )
     </script>
 </body>
 
