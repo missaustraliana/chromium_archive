@@ -33,13 +33,18 @@
         }).then(response => {
             response.json().then(data => {
                 for (let i = 0; i < data.availableBuildIndex.length; i++) {
-                    var chromiumversion = document.createElement('a');
-                    chromiumversion.innerHTML = data.availableBuildIndex[i].chromium_version
                     
+                    var chromiumversion = document.createElement('a');
+                    var br = document.createElement('br');
+                    chromiumversion.innerHTML = data.availableBuildIndex[i].chromium_version + " (" + data.availableBuildIndex[i].available_build_count + " builds) "
+                    
+                    document.body.appendChild(chromiumversion);
+                    document.body.appendChild(br);
                 }
-                document.body.appendChild(chromiumversion);
+                
+                
                console.log(data.availableBuildIndex[1].chromium_version)
-                document.getElementById("name").innerHTML = "Viewing " + data.availableBuilds + " builds"
+                document.getElementById("name").innerHTML = "Version Listing"
                 document.getElementById("progress").hidden = true
 
             }
