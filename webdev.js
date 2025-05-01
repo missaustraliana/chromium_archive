@@ -14,9 +14,10 @@ var helmet = require('helmet')
 
 // web app init
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(app);
 app.use(bodyParser.json());
 app.use(express.static("public"));
+app.use(helmet());
 
 
 const { TextWriter, Uint8ArrayReader, ZipReader } = require('@zip.js/zip.js');
