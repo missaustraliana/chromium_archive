@@ -7,9 +7,32 @@ const { get } = require('http');
 const crypto = require('crypto');
 const { db } = require('./db.js');
 const plist = require('plist');
+const express = require('express');
+const http = require('http');
+const bodyParser = require('body-parser');
+
+
+// web app init
+const app = express();
+const server = http.createServer(app);
+app.use(bodyParser.json());
+app.use(express.static("public"));
+
+
 const { TextWriter, Uint8ArrayReader, ZipReader } = require('@zip.js/zip.js');
 const { upload } = require('./upload.js');
 
+app.get("/index", (req, res) => {
+    const availableBuilds = db.prepare(`select count(chromium_version) c from chromium where is_uploaded > 0`).get()
+    const availableBuildIndex = db.prepare(`SELECT chromium_version, count(*) as available_build_count FROM chromium where is_uploaded = '1' GROUP BY chromium_version`).all()
+    const Index = db.prepare(`SELECT * FROM chromium where is_uploaded = '1' ORDER by build DESC`).all()
+
+    res.json({
+        availableBuilds: availableBuilds.c,
+        availableBuildIndex: availableBuildIndex,
+        buildIndex: Index
+    });
+});
 function getTimeAgo(timestamp) {
     const now = new Date();
     const lastModifiedDate = new Date(timestamp);
@@ -195,3 +218,8 @@ async function doUpload(commit, lastModified) {
 }
 
 console.log(`Monitoring started. Checking every ${checkInterval / 1000} seconds.`);
+
+const PORT = process.env.PORT || 2120;
+server.listen(PORT, () => {
+	console.log(`Server is running on port ${PORT}`);
+});
