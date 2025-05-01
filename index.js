@@ -35,7 +35,7 @@ app.get("/api/index", (req, res) => {
 });
 app.get("/api/index/:id", (req, res) => {
     const availableBuilds = db.prepare(`select count(chromium_version) c from chromium where chromium_version = ?`).get([req.params.id])
-    const Index = db.prepare(`SELECT build, build_date, created_date, chromium_version, filename, filesize, sha1 FROM chromium EXCLUDE where chromium_version = ?  ORDER by build DESC`).all([req.params.id])
+    const Index = db.prepare(`SELECT build FROM chromium EXCLUDE where chromium_version = ?  ORDER by build DESC`).all([req.params.id])
     res.json({
         availableBuilds: availableBuilds.c ?? 0,
         buildIndex: Index ?? 0

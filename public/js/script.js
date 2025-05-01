@@ -31,7 +31,7 @@ fetch("api/index", {
         */
         document.body.appendChild(container);
         console.log(data.availableBuildIndex[1].chromium_version)
-        document.getElementById("name").innerHTML = "Version Listing"
+        document.getElementById("name").innerHTML = "Chromium Archive"
         document.getElementById("progress").hidden = true
 
     }
@@ -68,7 +68,7 @@ function getVersionListing(version) {
                 container.appendChild(br);
             }
             document.body.appendChild(container);
-            document.getElementById("name").innerHTML = "Build Listing"
+            document.getElementById("name").innerHTML = "Chromium " + version
             document.getElementById("progress").hidden = true
 
         }
