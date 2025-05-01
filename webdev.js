@@ -15,10 +15,9 @@ const bodyParser = require('body-parser');
 
 // web app init
 const app = express();
-const server = https.createServer(app);
+const server = http.createServer(app);
 app.use(bodyParser.json());
 app.use(express.static("public"));
-app.use(helmet());
 
 
 const { TextWriter, Uint8ArrayReader, ZipReader } = require('@zip.js/zip.js');
