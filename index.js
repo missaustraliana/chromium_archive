@@ -25,7 +25,7 @@ const { upload } = require('./upload.js');
 app.get("/index", (req, res) => {
     const availableBuilds = db.prepare(`select count(chromium_version) c from chromium where is_uploaded > 0`).get()
     const availableBuildIndex = db.prepare(`SELECT chromium_version, count(*) as available_build_count FROM chromium where is_uploaded = '1' GROUP BY chromium_version`).all()
-    const Index = db.prepare(`SELECT * FROM chromium where is_uploaded = '1' ORDER by build DESC`).all()
+    const Index = db.prepare(`SELECT build, build_date, created_date, chromium_version, filename, filesize, sha1 FROM chromium EXCLUDE where is_uploaded = '1' ORDER by build DESC`).all()
 
     res.json({
         availableBuilds: availableBuilds.c,
@@ -139,10 +139,10 @@ function checkURL() {
 }
 
 // Initial check
-checkURL();
+//checkURL();
 
 // Set up recurring checks
-setInterval(checkURL, checkInterval);
+//setInterval(checkURL, checkInterval);
 async function doUpload(commit, lastModified) {
     const zip = `${commit}.zip`;
     console.log(`Uploading: ${commit}.zip`);
