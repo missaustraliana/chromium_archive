@@ -95,6 +95,21 @@ function getBuildDetails(version, build) {
         response.json().then(data => {
             var container = document.createElement('div');
             container.id = "container";
+            var chromium_version = document.createElement('h2');
+            var downloadlink = document.createElement('a');
+            var shasum = document.createElement('p');
+            var creation = document.createElement('p');
+            downloadlink.innerText = "Download";
+            downloadlink.href = "https://archive.org/download/chromium-macos-arm-archive/" + data[0].filename
+            chromium_version.innerText = "Chromium " + data[0].chromium_version
+            creation.innerText = "Built: " + data[0].build_date
+            shasum.innerText = data[0].sha1
+        
+            container.appendChild(chromium_version);
+            container.appendChild(creation);
+            container.appendChild(downloadlink);
+            container.appendChild(shasum);
+            
             /*
                 var chromiumversion = document.createElement('a');
                 var br = document.createElement('br');
