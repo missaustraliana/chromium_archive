@@ -22,7 +22,7 @@ app.use(express.static("public"));
 const { TextWriter, Uint8ArrayReader, ZipReader } = require('@zip.js/zip.js');
 const { upload } = require('./upload.js');
 
-app.get("/index", (req, res) => {
+app.get("/api/index", (req, res) => {
     const availableBuilds = db.prepare(`select count(chromium_version) c from chromium where is_uploaded > 0`).get()
     const availableBuildIndex = db.prepare(`SELECT chromium_version, count(*) as available_build_count FROM chromium where is_uploaded = '1' GROUP BY chromium_version ORDER by build DESC`).all()
     const Index = db.prepare(`SELECT build, build_date, created_date, chromium_version, filename, filesize, sha1 FROM chromium EXCLUDE where is_uploaded = '1' ORDER by build DESC`).all()
