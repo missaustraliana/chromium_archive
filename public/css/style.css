@@ -61,6 +61,8 @@ a {
     line-height: 1.4;
 }
 
-
+.thin {
+    font-weight: lighter;
+}
 
 

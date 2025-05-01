@@ -36,7 +36,7 @@
                     
                     var chromiumversion = document.createElement('a');
                     var br = document.createElement('br');
-                    chromiumversion.innerHTML = data.availableBuildIndex[i].chromium_version + " (" + data.availableBuildIndex[i].available_build_count + " builds) "
+                    chromiumversion.innerHTML = data.availableBuildIndex[i].chromium_version + " <span class=\"thin\">(" + data.availableBuildIndex[i].available_build_count + " builds)</span>"
                     
                     document.body.appendChild(chromiumversion);
                     document.body.appendChild(br);
