@@ -52,7 +52,7 @@ app.get("/api/index/:id/:build", (req, res) => {
 
 console.log(`THIS IS A WEB TEST ENVIROMENT. DO NOT USE IN PRODUCTION`);
 
-const PORT = process.env.PORT || 2120;
+const PORT = process.env.PORT || 2121;
 server.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });

@@ -41,12 +41,6 @@ app.get("/api/index/:id", (req, res) => {
         buildIndex: Index ?? 0
     });
 });
-app.get("/api/index/:id/:build", (req, res) => {
-    const Index = db.prepare(`SELECT * FROM chromium EXCLUDE where chromium_version = ? and build = ? ORDER by build DESC`).all([req.params.id, req.params.build])
-    res.json(
-        Index ?? 0
-    );
-});
 function getTimeAgo(timestamp) {
     const now = new Date();
     const lastModifiedDate = new Date(timestamp);
