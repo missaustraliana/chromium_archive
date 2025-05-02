@@ -1,6 +1,7 @@
 function bytesToMB(bytes) {
     return (bytes / (1024 * 1024)).toFixed(2);
 }
+const DateTime = luxon.DateTime;
 fetch("api/index", {
 
     headers: {
@@ -61,7 +62,8 @@ function getVersionListing(version) {
 
                 var chromiumversion = document.createElement('a');
                 var br = document.createElement('br');
-                chromiumversion.innerHTML = data.buildIndex[i].build
+                const iso = luxon.DateTime.fromISO(data.buildIndex[i].build_date);
+                chromiumversion.innerHTML = data.buildIndex[i].build + " <span class=\"thin\">" + iso.toRelative() + "</span>"
                 chromiumversion.href = "#";
                 chromiumversion.setAttribute("onClick", "getBuildDetails(\"" + version + "\", \"" + data.buildIndex[i].build + "\")")
                 container.appendChild(chromiumversion);
@@ -102,7 +104,8 @@ function getBuildDetails(version, build) {
             downloadlink.innerText = "Download";
             downloadlink.href = "https://archive.org/download/chromium-macos-arm-archive/" + data[0].filename
             chromium_version.innerText = "Chromium " + data[0].chromium_version
-            creation.innerText = "Built: " + data[0].build_date
+            const iso = luxon.DateTime.fromISO(data[0].build_date);
+            creation.innerText = "Published " + iso.toRelative()
             shasum.innerText = data[0].sha1
         
             container.appendChild(chromium_version);
