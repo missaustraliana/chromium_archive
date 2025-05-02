@@ -101,7 +101,9 @@ function getBuildDetails(version, build) {
             var downloadlink = document.createElement('a');
             var shasum = document.createElement('p');
             var creation = document.createElement('p');
-            downloadlink.innerText = "Download";
+            var itemfilesize = document.createElement('p');
+            downloadlink.innerText = "Download"; 
+            itemfilesize.innerText = filesize(144539398, {base: 2})
             downloadlink.href = "https://archive.org/download/chromium-macos-arm-archive/" + data[0].filename
             chromium_version.innerText = "Chromium " + data[0].chromium_version
             const iso = luxon.DateTime.fromISO(data[0].build_date);
@@ -111,6 +113,7 @@ function getBuildDetails(version, build) {
             container.appendChild(chromium_version);
             container.appendChild(creation);
             container.appendChild(downloadlink);
+            container.appendChild(itemfilesize);
             container.appendChild(shasum);
             
             /*
