@@ -10,7 +10,7 @@
   "description": "",
   "dependencies": {
     "@zip.js/zip.js": "^2.7.60",
-    "better-sqlite3": "^11.9.1",
+    "better-sqlite3": "^11.10.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "plist": "^3.1.0"
